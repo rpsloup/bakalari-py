@@ -3,34 +3,42 @@ import requests
 
 def fetch_api_token(auth_data):
     """Fetches the access token from the API by entered data"""
-    headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-    response = requests.post(
-        f'{auth_data["endpoint"]}/api/login',
-        headers=headers,
-        data=f'client_id=ANDR&grant_type=password&\
-               username={auth_data["username"]}&password={auth_data["password"]}',
-        timeout=10
-    )
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    return None
+    try:
+        headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
+        response = requests.post(
+            f'{auth_data["endpoint"]}/api/login',
+            headers=headers,
+            data=f'client_id=ANDR&grant_type=password&\
+                username={auth_data["username"]}&password={auth_data["password"]}',
+            timeout=10
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        return None
+    except requests.exceptions.RequestException as error:
+        print(error)
+        return None
 
 def fetch_from_api(token_data, auth_data, endpoint):
     """Fetches data from the API via the passed access token"""
-    headers = {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Authorization': f'{token_data["token_type"]} {token_data["access_token"]}',
-    }
-    response = requests.get(
-        f'{auth_data["endpoint"]}/api/3{endpoint}',
-        headers=headers,
-        timeout=10
-    )
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    return None
+    try:
+        headers = {
+            'Content-Type' : 'application/x-www-form-urlencoded',
+            'Authorization': f'{token_data["token_type"]} {token_data["access_token"]}',
+        }
+        response = requests.get(
+            f'{auth_data["endpoint"]}/api/3{endpoint}',
+            headers=headers,
+            timeout=10
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        return None
+    except requests.exceptions.RequestException as error:
+        print(error)
+        return None
 
 class BakaClient:
     """Custom wrapper class for accessing the Bakaláři API"""
