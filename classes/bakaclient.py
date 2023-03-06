@@ -13,18 +13,39 @@ def fetch_api_token(auth_data):
     )
     if response.status_code == 200:
         data = response.json()
-        print(data['access_token'])
+        return data
+    return None
+
+def fetch_from_api(token_data, auth_data, endpoint):
+    """Fetches data from the API via the passed access token"""
+    headers = {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Authorization': f'{token_data["token_type"]} {token_data["access_token"]}',
+    }
+    response = requests.get(
+        f'{auth_data["endpoint"]}/api/3{endpoint}',
+        headers=headers,
+        timeout=10
+    )
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    return None
 
 class BakaClient:
     """Custom wrapper class for accessing the Bakaláři API"""
 
     def __init__(self):
-        self.auth = None
+        self.auth_data = None
+        self.token_data = None
 
     def login(self, auth_data):
         """Handles login by fetching the access token"""
-        self.auth = auth_data
-        fetch_api_token(auth_data)
+        token_data = fetch_api_token(auth_data)
+        self.auth_data = auth_data
+        self.token_data = token_data
 
     def fetch(self, endpoint):
         """Handles fetching data from the Bakaláři API"""
+        data = fetch_from_api(self.token_data, self.auth_data, endpoint)
+        return data
