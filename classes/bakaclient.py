@@ -57,3 +57,13 @@ class BakaClient:
         """Handles fetching data from the Bakaláři API"""
         data = fetch_from_api(self.token_data, self.auth_data, endpoint)
         return data
+
+    def get_subjects(self):
+        """Fetches the subjects from the API"""
+        data = fetch_from_api(self.token_data, self.auth_data, '/subjects')
+        return data['Subjects']
+
+    def get_timetable(self):
+        """Fetches the timetable from the API"""
+        data = fetch_from_api(self.token_data, self.auth_data, '/timetable/actual')
+        return data
